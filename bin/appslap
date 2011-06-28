@@ -2,4 +2,5 @@
 
 import appslap
 
-appslap.main()
+#FIXME: define a main method in AppSlap maybe?
+AppSlap.main()
