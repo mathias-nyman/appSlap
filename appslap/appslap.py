@@ -41,6 +41,7 @@ class AppSlap:
 
     def __init__( self ):
         self.__screenDimensions = (800, 600)
+        self.__availableArea = (-1, -1)
         self.__programLaunchers = []
         self.__style = None
 
@@ -71,8 +72,8 @@ class AppSlap:
         cmd = "xrandr -q | /bin/grep '*'"
         sysOut = self.getFromSystem( cmd )
         self.parseXrandrOutput( sysOut )
-        dim = TkDimensionsGetter().getDimensions()
-        debug( "MILESTONE: got dimensions from Tk: " + str(dim) )
+        self.__availableArea = TkDimensionsGetter().getDimensions()
+        debug( "MILESTONE: got dimensions from Tk: " + str(self.__availableArea) )
 
 
     def launchWindows( self ):
@@ -100,6 +101,7 @@ class AppSlap:
         for lay in layout:
             geometry = Geometry()
             geometry.setScreenSize( *self.__screenDimensions )
+            geometry.setAvailableArea( *self.__availableArea )
             geometry.setGeometry( *lay )
             for program in self.Options.programs:
                 if program.getName() == programName:
@@ -135,8 +137,11 @@ class AppSlap:
         self.setProgram( args.program[0] )
 
 
-if __name__ == "__main__":
+def main():
     appslap = AppSlap()
     appslap.parseCmdLineOptions( sys.argv )
     appslap.launchWindows()
+
+if __name__ == "__main__":
+    main()
 

@@ -5,6 +5,8 @@ class Geometry:
     def __init__( self ):
         self.__screenWidth = 800 # pixels
         self.__screenHeight = 600 # pixels
+        self.__availableWidth = -1
+        self.__availableHeight = -1
         # the following are in X geometry units
         self.__width = 1
         self.__height = 1
@@ -13,20 +15,37 @@ class Geometry:
 
     def setDimensions( self, width, height ):
         # TODO: do more precise conversion from percentage to X geometry units
-        self.__width = int(width / 100.0 * self.__screenWidth / 6.1)
-        self.__width += 1 #magic
-        self.__height = int(height / 100.0 * self.__screenHeight / 14.3)
-        self.__height -= 0 #magic
+        maxWidth = self.__screenWidth if self.__availableWidth < 0 else self.__availableWidth
+        maxHeight = self.__screenHeight if self.__availableHeight < 0 else self.__availableHeight
+
+        self.__width = int(width / 100.0 * maxWidth / 6.0)
+        self.__width += -1 #magic
+        self.__height = int(height / 100.0 * maxHeight / 13.0)
+        self.__height += -1 #magic
 
     def setPosition( self, down, right ):
         #TODO: geometry can be + or -, depending on from which end, and sometimes
         #  it makes more sense to use one rather then the other
-        self.__down = int(down * self.__screenHeight / 100.0) if down is not 0 else 0
-        self.__right = int(right * self.__screenWidth / 100.0) if right is not 0 else 0
+        maxWidth = self.__screenWidth if self.__availableWidth < 0 else self.__availableWidth
+        maxHeight = self.__screenHeight if self.__availableHeight < 0 else self.__availableHeight
+
+        self.__down = int(down * maxHeight / 100.0) if down is not 0 else 0
+        self.__right = int(right * maxWidth / 100.0) if right is not 0 else 0
+
+        #TODO: this is true if e.g menubar is on top, but what if it is on the bottom?
+        if maxWidth != self.__screenWidth and self.__down != 0:
+            self.__right += self.__screenWidth - maxWidth
+        if maxHeight != self.__screenHeight and self.__down != 0:
+            self.__down += self.__screenHeight - maxHeight
 
     def setScreenSize( self, width, height ):
         self.__screenWidth = width
         self.__screenHeight = height
+
+    #TODO: also specify from where the difference comes from ( e.g menubar at top or bottom? )
+    def setAvailableArea( self, width, height ):
+        self.__availableWidth = width if width > 0 else -1
+        self.__availableHeight = height if height > 0 else -1
 
     def setGeometry( self, width, height, down, right ):
         self.setDimensions( width, height )

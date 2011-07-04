@@ -19,6 +19,9 @@ class Style:
     # v
     #   down
     #
+    # NOTE: for some yet unknown reason it is best to give
+    #       the percentages in equal ten's
+    #
     def getLayout( self ):
         raise NotImplementedError
 
@@ -88,8 +91,8 @@ class StyleFourFour( Style ):
         return [ self.__getLeftUp(), self.__getLeftMiddle(),  self.__getLeftDown(), 
                 self.__getRight() ]
 
-    def __getLeftUp( self ):     return ( 33,  33,  0,  0 )
-    def __getLeftMiddle( self ): return ( 33,  33, 33,  0 )
-    def __getLeftDown( self ):   return ( 33,  33, 66,  0 )
-    def __getRight( self ):      return ( 66, 100,  0, 50 )
+    def __getLeftUp( self ):     return ( 30,  30,  0,  0 )
+    def __getLeftMiddle( self ): return ( 30,  30, 30,  0 )
+    def __getLeftDown( self ):   return ( 30,  40, 60,  0 )
+    def __getRight( self ):      return ( 70, 100,  0, 50 )
 
