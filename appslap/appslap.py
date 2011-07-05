@@ -13,7 +13,7 @@ from style      import *
 from dimensions import *
 
 
-DEBUG=True
+DEBUG=False
 def debug( line ):
     if DEBUG:
         print line
@@ -116,12 +116,17 @@ class AppSlap:
     def parseCmdLineOptions( self, argv ):
         try:
             import argparse
+            # NOTE: we might want to give this to the constructor of ArgumentParser if we want to use
+            # e.g newline characters in help text
+            # formatter_class=RawTextHelpFormatter
             parser = argparse.ArgumentParser(description="Launch a set of windowed programs, e.g. xterm's.")
+            parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', default=False,
+                    help='turn on verbose output')
             parser.add_argument('-p', '--program', dest='program', nargs=1, default=self.Defaults.program,
-                    type=complex, choices=[p.getName() for p in self.Options.programs],
+                    choices=[p.getName() for p in self.Options.programs],
                     help='program to launch')
             parser.add_argument('-s', '--style', dest='style', nargs=1, default=self.Defaults.style,
-                    type=complex, choices=[s.getName() for s in self.Options.styles],
+                    choices=[s.getName() for s in self.Options.styles],
                     help='style of window positioning')
             #FIXME: argparse works outside this try, but only with one complex type argument
             #  UPDATE: this actually seems to work with python 2.7.1
@@ -130,9 +135,13 @@ class AppSlap:
         except ImportError, e:
             #TODO: argparse is only in python >= 2.7, offer an alternative
             debug("ERROR: argparse failed.")
+            global DEBUG
+            DEBUG = True
             self.setStyle( 'two' )
             self.setProgram( 'xterm' )
 
+        global DEBUG
+        DEBUG = args.verbose
         self.setStyle(  args.style[0] )
         self.setProgram( args.program[0] )
 
