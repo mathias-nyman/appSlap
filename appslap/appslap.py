@@ -18,11 +18,16 @@ def debug( line ):
     if DEBUG:
         print line
 
+VERBOSE=False
+def verbose( line ):
+    if VERBOSE:
+        print line
+
 class AppSlap:
 
     class Defaults:
-        program=['xterm']
-        style=['fourfour']
+        program=Xterm
+        style=StyleFourFour
 
     # TODO: fill this list by searching for all classes that implement some interface
     class Options:
@@ -80,7 +85,7 @@ class AppSlap:
         debug( "MILESTONE: launching windows with commands:")
         for launcher in self.__programLaunchers:
             cmd = str(launcher)
-            debug( cmd )
+            verbose( cmd )
             subprocess.Popen( cmd.split(' ') )
 
 
@@ -120,12 +125,14 @@ class AppSlap:
             # e.g newline characters in help text
             # formatter_class=RawTextHelpFormatter
             parser = argparse.ArgumentParser(description="Launch a set of windowed programs, e.g. xterm's.")
+            parser.add_argument('-d', '--debug', dest='debug', action='store_true', default=False,
+                    help='turn on debug output')
             parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', default=False,
                     help='turn on verbose output')
-            parser.add_argument('-p', '--program', dest='program', nargs=1, default=self.Defaults.program,
+            parser.add_argument('-p', '--program', dest='program', nargs=1, default=[self.Defaults.program.getName()],
                     choices=[p.getName() for p in self.Options.programs],
                     help='program to launch')
-            parser.add_argument('-s', '--style', dest='style', nargs=1, default=self.Defaults.style,
+            parser.add_argument('-s', '--style', dest='style', nargs=1, default=[self.Defaults.style.getName()],
                     choices=[s.getName() for s in self.Options.styles],
                     help='style of window positioning')
             #FIXME: argparse works outside this try, but only with one complex type argument
@@ -135,13 +142,14 @@ class AppSlap:
         except ImportError, e:
             #TODO: argparse is only in python >= 2.7, offer an alternative
             debug("ERROR: argparse failed.")
-            global DEBUG
-            DEBUG = True
             self.setStyle( 'two' )
             self.setProgram( 'xterm' )
 
+        # TODO: maybe also automatically set verbose=True if debug==True
         global DEBUG
-        DEBUG = args.verbose
+        global VERBOSE
+        DEBUG = args.debug
+        VERBOSE = args.verbose
         self.setStyle(  args.style[0] )
         self.setProgram( args.program[0] )
 
