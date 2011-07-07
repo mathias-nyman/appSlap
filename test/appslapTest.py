@@ -20,9 +20,10 @@ class TestAppSlap(unittest.TestCase):
         """)
         self.__appslap.issueSystemCall = mock.Mock(return_value=True)
 
-        #TODO: how to make appslap use this?
+        #TODO: how to make appslap use this? 
+        #TODO: also mock the constructor, or change so that the contructor does not launch Tk window
         self.__dimGetter = appslap.TkDimensionsGetter()
-        self.__dimGetter.getDimensions = mock.Mock(return_value=(999,999)) 
+        self.__dimGetter.getDimensions = mock.Mock(return_value=(1024, 728)) 
         pass
 
     @unittest.expectedFailure
@@ -42,5 +43,6 @@ class TestAppSlap(unittest.TestCase):
                 (('xterm -bg black -fg gray -cr cyan -geometry 84x27+0-0 +cm +dc +sb zsh',), {}), #TODO: fix this bug!!!
                 (('xterm -bg black -fg gray -cr cyan -geometry 84x55-0+0 +cm +dc +sb zsh',), {})
                 ]
+        print self.__appslap.issueSystemCall.call_args_list 
         self.assertTrue( expectedCallsWithArguments == self.__appslap.issueSystemCall.call_args_list )
         pass
