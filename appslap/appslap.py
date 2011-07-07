@@ -137,7 +137,7 @@ class AppSlap:
                     help='style of window positioning')
             #FIXME: argparse works outside this try, but only with one complex type argument
             #  UPDATE: this actually seems to work with python 2.7.1
-            args = parser.parse_args()
+            args = parser.parse_args(argv)
 
         except ImportError, e:
             #TODO: argparse is only in python >= 2.7, offer an alternative
@@ -145,11 +145,10 @@ class AppSlap:
             self.setStyle( 'two' )
             self.setProgram( 'xterm' )
 
-        # TODO: maybe also automatically set verbose=True if debug==True
         global DEBUG
         global VERBOSE
         DEBUG = args.debug
-        VERBOSE = args.verbose
+        VERBOSE = True if args.debug else args.verbose
         self.setStyle(  args.style[0] )
         self.setProgram( args.program[0] )
 
