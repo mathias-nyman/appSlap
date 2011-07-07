@@ -2,6 +2,9 @@
 # Represents X Geometry
 class Geometry:
 
+    COLUMN_SIZE = 6
+    ROW_SIZE = 13
+
     def __init__( self ):
         self.__screenWidth = 800 # pixels
         self.__screenHeight = 600 # pixels
@@ -18,9 +21,9 @@ class Geometry:
         maxWidth = self.__screenWidth if self.__availableWidth < 0 else self.__availableWidth
         maxHeight = self.__screenHeight if self.__availableHeight < 0 else self.__availableHeight
 
-        self.__width = int(width / 100.0 * maxWidth / 6.0)
+        self.__width = int(width / 100.0 * float(maxWidth) / Geometry.COLUMN_SIZE)
         self.__width += -1 #magic
-        self.__height = int(height / 100.0 * maxHeight / 13.0)
+        self.__height = int(height / 100.0 * float(maxHeight) / Geometry.ROW_SIZE)
         self.__height += -1 #magic
 
     def setPosition( self, down, right ):
@@ -51,6 +54,18 @@ class Geometry:
         self.setDimensions( width, height )
         self.setPosition( down, right )
 
+    def getWidth( self ):
+        return self.__width
+
+    def getHeight( self ):
+        return self.__height
+
+    def getDown( self ):
+        return self.__down
+
+    def getRight( self ):
+        return self.__right
+
     def __str__( self ):
         asStr = str(self.__width)
         asStr += 'x' + str(self.__height)
@@ -59,3 +74,77 @@ class Geometry:
         asStr += '+' + str(self.__down) if (self.__down - self.__screenHeight/2) < 0 else '-0'
         return asStr
 
+
+# A class to optimze geomertries to perfectly fit the screen
+# This is needed e.g when two geometries are 50% width, but when
+# converted to columns, both together are one column less then
+# the whole screen width
+class GeometryOptimizer:
+
+    #TODO: Optimization might not always be wanted, so the style should define if
+    # it wants it or not!
+    def __init__( self, geometries):
+        self.__geometries = geometries
+
+    def optimize( self ):
+        for geometry in self.__geometries:
+            self.__adjustWidth( geomerty )
+            self.__adjustHeight( geomerty )
+
+    def __adjustWidth( self, geometry ):
+            toOptimize = []
+            toOptimize.append(geometry)
+            for otherGeometry in self.__geometries:
+                if self.__onSameHorizontalLine( geometry, otherGeometry ):
+                    toOptimize.append(otherGeometry)
+            self.__optimizeRow( toOptimize )
+
+    def __adjustHeight( self, geometry ):
+            toOptimize = []
+            toOptimize.append(geometry)
+            for otherGeometry in self.__geometries:
+                if self.__onSameVerticalLine( geometry, otherGeometry ):
+                    toOptimize.append(otherGeometry)
+            self.__optimizeColumn( toOptimize )
+
+    def __onSameVerticalLine( geometry, otherGeometry ):
+        w1 = geometry.getWidth()
+        h1 = geometry.getHeight()
+        d1 = geometry.getDown()
+        r1 = geometry.getRight()
+
+        w2 = otherGeometry.getWidth()
+        h2 = otherGeometry.getHeight()
+        d2 = otherGeometry.getDown()
+        r2 = otherGeometry.getRight()
+
+        #TODO
+        return False
+
+    def __onSameHorizontalLine( geometry, otherGeometry ):
+        w1 = geometry.getWidth()
+        h1 = geometry.getHeight()
+        d1 = geometry.getDown()
+        r1 = geometry.getRight()
+
+        w2 = otherGeometry.getWidth()
+        h2 = otherGeometry.getHeight()
+        d2 = otherGeometry.getDown()
+        r2 = otherGeometry.getRight()
+
+        #TODO
+        return False
+
+    def __optimizeRow( geometries ):
+        #TODO
+
+        #NOTE: optimze the biggest geometry!
+        #NOTE: direction of the increase, e.g width -> increase width rightwards, might want to change offset instead
+        pass
+
+    def __optimizeColumn( geometries ):
+        #TODO
+
+        #NOTE: optimze the biggest geometry!
+        #NOTE: direction of the increase, e.g height -> increase height downards, might want to change offset instead
+        pass
