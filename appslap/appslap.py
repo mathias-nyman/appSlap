@@ -81,12 +81,15 @@ class AppSlap:
         debug( "MILESTONE: got dimensions from Tk: " + str(self.__availableArea) )
 
 
+    def issueSystemCall( self, cmd ):
+            subprocess.Popen( cmd.split(' ') )
+
     def launchWindows( self ):
         debug( "MILESTONE: launching windows with commands:")
         for launcher in self.__programLaunchers:
             cmd = str(launcher)
             verbose( cmd )
-            subprocess.Popen( cmd.split(' ') )
+            self.issueSystemCall( cmd )
 
 
     def setStyle( self, styleName ):
@@ -155,7 +158,7 @@ class AppSlap:
 
 def main():
     appslap = AppSlap()
-    appslap.parseCmdLineOptions( sys.argv )
+    appslap.parseCmdLineOptions( sys.argv[1:] )
     appslap.launchWindows()
 
 if __name__ == "__main__":

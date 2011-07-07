@@ -1,14 +1,46 @@
 import appslap
 import unittest
+import mock
 
-# This class is for black-box testing, not unit testing
+# This class is for black-box testing.
+#
+# It is intended for easy testing with real life data, since
+# nothing seems to be the same from system to system.
 class TestAppSlap(unittest.TestCase):
     
     def setUp(self):
         self.__appslap = appslap.AppSlap()
-        self.__appslap.parseCmdLineOptions(['-p', 'xterm', '-s', 'three'])
+        self.__appslap.getFromSystem = mock.Mock(return_value="""
+            Screen 0: minimum 320 x 200, current 1024 x 768, maximum 8192 x 8192
+            LVDS1 connected 1024x768+0+0 (normal left inverted right x axis y axis) 246mm x 184mm
+               1024x768       50.0*+   60.0     40.0  
+               800x600        60.3     56.2  
+               640x480        60.0     59.9  
+            VGA1 disconnected (normal left inverted right x axis y axis)
+        """)
+        self.__appslap.issueSystemCall = mock.Mock(return_value=True)
+
+        #TODO: how to make appslap use this?
+        self.__dimGetter = appslap.TkDimensionsGetter()
+        self.__dimGetter.getDimensions = mock.Mock(return_value=(999,999)) 
         pass
 
-    def testSomething(self):
-        #TODO: can we do black-box testing here?
+    @unittest.expectedFailure
+    def testStyleThreeOn1024x768(self):
+        self.__appslap.parseCmdLineOptions(['-p', 'xterm', '-s', 'three'])
+        self.__appslap.getFromSystem.assert_called_with("xrandr -q | /bin/grep '*'")
+        self.__appslap.launchWindows()
+
+        # This feature to assert multiple calls to a mocked function is comming sometime in 2011
+        #self.__appslap.issueSystemCall.assert_called_once_with('xterm -bg black -fg gray -cr cyan -geometry 84x27+0+0 +cm +dc +sb zsh')
+        #self.__appslap.issueSystemCall.assert_called_once_with('xterm -bg black -fg gray -cr cyan -geometry 84x27+0-0 +cm +dc +sb zsh')
+        #self.__appslap.issueSystemCall.assert_called_once_with('xterm -bg black -fg gray -cr cyan -geometry 84x55-0+0 +cm +dc +sb zsh')
+        #self.__appslap.issueSystemCall = mock.Mock(return_value=True)
+
+        expectedCallsWithArguments = [
+                (('xterm -bg black -fg gray -cr cyan -geometry 84x27+0+0 +cm +dc +sb zsh',), {}), 
+                (('xterm -bg black -fg gray -cr cyan -geometry 84x27+0-0 +cm +dc +sb zsh',), {}), #TODO: fix this bug!!!
+                (('xterm -bg black -fg gray -cr cyan -geometry 84x55-0+0 +cm +dc +sb zsh',), {})
+                ]
+        self.assertTrue( expectedCallsWithArguments == self.__appslap.issueSystemCall.call_args_list )
         pass

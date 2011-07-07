@@ -35,7 +35,7 @@ build: clean
 	@echo -e '\n$(BLUE) -------------- BUILD --------------  $(NO_COLOR)\n'
 	@python setup.py build
 
-test: build
+test: user-install
 	@ #TODO: colorize, basics are in place...
 	@echo -e '\n$(BLUE) -------------- TEST --------------  $(NO_COLOR)\n'
 	@python -m unittest discover -v -s $(TEST_DIR) -p "$(TEST_FILE_PATTERN)" \
