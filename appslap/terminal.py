@@ -103,6 +103,5 @@ class GnomeTerminal( Terminal ):
     def __str__( self ):
         asStr = self.__program + \
             ' --geometry ' + str(self.__geometry) + \
-            ' ' + self.__flags + \
             ' -e ' + self.__shell
         return asStr
