@@ -91,8 +91,8 @@ class StyleFourFour( Style ):
         return [ self.__getLeftUp(), self.__getLeftMiddle(),  self.__getLeftDown(), 
                 self.__getRight() ]
 
-    def __getLeftUp( self ):     return ( 30,  30,  0,  0 )
-    def __getLeftMiddle( self ): return ( 30,  30, 30,  0 )
-    def __getLeftDown( self ):   return ( 30,  40, 60,  0 )
-    def __getRight( self ):      return ( 70, 100,  0, 50 )
+    def __getLeftUp( self ):     return ( 40,  30,  0,  0 )
+    def __getLeftMiddle( self ): return ( 40,  30, 30,  0 )
+    def __getLeftDown( self ):   return ( 40,  40, 60,  0 )
+    def __getRight( self ):      return ( 60, 100,  0, 50 )
 
