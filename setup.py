@@ -25,7 +25,8 @@ def checkDependencies():
     try:
         __import__('Tkinter')
         __import__('argparse')
-        __import__('Mock')
+        __import__('mock')
+        __import__('unittest')
         return True
 
     except ImportError:
