@@ -10,14 +10,22 @@ class TestAppSlap(unittest.TestCase):
     
     def setUp(self):
         self.__appslap = appslap.AppSlap()
-        self.__appslap.getFromSystem = mock.Mock(return_value="""
-            Screen 0: minimum 320 x 200, current 1024 x 768, maximum 8192 x 8192
-            LVDS1 connected 1024x768+0+0 (normal left inverted right x axis y axis) 246mm x 184mm
-               1024x768       50.0*+   60.0     40.0  
-               800x600        60.3     56.2  
-               640x480        60.0     59.9  
-            VGA1 disconnected (normal left inverted right x axis y axis)
+
+        self.__appslap.getFromSystem = mock.Mock( return_value="""
+           1024x768       50.0*+   60.0     40.0  
         """)
+
+        # TODO: this would be the output of only `xrandr`, make getFromSystem() actually get that,
+        #       instead of `xrandr -q | grep '*'`
+
+        #self.__appslap.getFromSystem = mock.Mock(return_value="""
+        #    Screen 0: minimum 320 x 200, current 1024 x 768, maximum 8192 x 8192
+        #    LVDS1 connected 1024x768+0+0 (normal left inverted right x axis y axis) 246mm x 184mm
+        #       1024x768       50.0*+   60.0     40.0  
+        #       800x600        60.3     56.2  
+        #       640x480        60.0     59.9  
+        #    VGA1 disconnected (normal left inverted right x axis y axis)
+        #""")
         self.__appslap.issueSystemCall = mock.Mock(return_value=True)
 
         #TODO: how to make appslap use this? 
@@ -26,7 +34,6 @@ class TestAppSlap(unittest.TestCase):
         self.__dimGetter.getDimensions = mock.Mock(return_value=(1024, 728)) 
         pass
 
-    @unittest.expectedFailure
     def testStyleThreeOn1024x768(self):
         self.__appslap.parseCmdLineOptions(['-p', 'xterm', '-s', 'three'])
         self.__appslap.getFromSystem.assert_called_with("xrandr -q | /bin/grep '*'")
@@ -40,9 +47,8 @@ class TestAppSlap(unittest.TestCase):
 
         expectedCallsWithArguments = [
                 (('xterm -bg black -fg gray -cr cyan -geometry 84x27+0+0 +cm +dc +sb zsh',), {}), 
-                (('xterm -bg black -fg gray -cr cyan -geometry 84x27+0-0 +cm +dc +sb zsh',), {}), #TODO: fix this bug!!!
+                (('xterm -bg black -fg gray -cr cyan -geometry 84x27+0-0 +cm +dc +sb zsh',), {}),
                 (('xterm -bg black -fg gray -cr cyan -geometry 84x55-0+0 +cm +dc +sb zsh',), {})
                 ]
-        print self.__appslap.issueSystemCall.call_args_list 
         self.assertTrue( expectedCallsWithArguments == self.__appslap.issueSystemCall.call_args_list )
         pass
