@@ -120,6 +120,14 @@ class AppSlap:
         else:
             debug( "MILESTONE: using program: " + programName )
 
+        self.optimizeGeometries()
+       
+
+    def optimizeGeometries( self ):
+        geometries = [ p.getGeometry() for p in self.__programLaunchers ]
+        geometryOptimizer = GeometryOptimizer( geometries )
+        geometryOptimizer.optimize()
+
 
     def parseCmdLineOptions( self, argv ):
         try:

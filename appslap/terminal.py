@@ -31,6 +31,9 @@ class Terminal:
     def setGeometry( self, geometry ):
         raise NotImplementedError
 
+    def getGeometry( self ):
+        raise NotImplementedError
+
     def __str__( self ):
         raise NotImplementedError
 
@@ -62,6 +65,9 @@ class Xterm( Terminal ):
 
     def setGeometry( self, geometry ):
         self.__geometry = geometry
+
+    def getGeometry( self ):
+        return self.__geometry
 
     def __str__( self ):
         asStr = self.__program + \
@@ -99,6 +105,9 @@ class GnomeTerminal( Terminal ):
 
     def setGeometry( self, geometry ):
         self.__geometry = geometry
+
+    def getGeometry( self ):
+        return self.__geometry
 
     def __str__( self ):
         asStr = self.__program + \

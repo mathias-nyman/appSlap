@@ -22,9 +22,7 @@ class Geometry:
         maxHeight = self.__screenHeight if self.__availableHeight < 0 else self.__availableHeight
 
         self.__width = int(width / 100.0 * float(maxWidth) / Geometry.COLUMN_SIZE)
-        self.__width += -1 #magic
         self.__height = int(height / 100.0 * float(maxHeight) / Geometry.ROW_SIZE)
-        self.__height += -1 #magic
 
     def setPosition( self, down, right ):
         #TODO: geometry can be + or -, depending on from which end, and sometimes
@@ -54,6 +52,13 @@ class Geometry:
         self.setDimensions( width, height )
         self.setPosition( down, right )
 
+    # NOTE: use with caution!
+    def setHardCodedGeometry( self, width, height, down, right ):
+        self.__width = width
+        self.__height = height
+        self.__down = down
+        self.__right = right
+
     def getWidth( self ):
         return self.__width
 
@@ -71,6 +76,9 @@ class Geometry:
 
     def getHeightInPixels( self ):
         return self.__height * Geometry.ROW_SIZE
+
+    def getAvailableArea( self ):
+        return (self.__availableWidth, self.__availableHeight)
 
     def __str__( self ):
         asStr = str(self.__width)
@@ -95,22 +103,22 @@ class GeometryOptimizer:
 
     def optimize( self ):
         for geometry in self.__geometries:
-            self.__adjustWidth( geomerty )
-            self.__adjustHeight( geomerty )
+            self.__adjustWidth( geometry )
+            self.__adjustHeight( geometry )
 
     def __adjustWidth( self, geometry ):
             toOptimize = []
-            toOptimize.append(geometry)
             for otherGeometry in self.__geometries:
                 if self.__onSameHorizontalLine( geometry, otherGeometry ):
+                    # NOTE: alse the geometry to compare with will be appended here
                     toOptimize.append(otherGeometry)
             self.__optimizeRow( toOptimize )
 
     def __adjustHeight( self, geometry ):
             toOptimize = []
-            toOptimize.append(geometry)
             for otherGeometry in self.__geometries:
                 if self.__onSameVerticalLine( geometry, otherGeometry ):
+                    # NOTE: alse the geometry to compare with will be appended here
                     toOptimize.append(otherGeometry)
             self.__optimizeColumn( toOptimize )
 
@@ -123,7 +131,7 @@ class GeometryOptimizer:
     #   r2  |    ||    |
     #        ----  ---- 
     #
-    def __onSameVerticalLine( geometry, otherGeometry ):
+    def __onSameVerticalLine( self, geometry, otherGeometry ):
         w1 = geometry.getWidthInPixels()
         r1 = geometry.getRight()
 
@@ -135,7 +143,7 @@ class GeometryOptimizer:
         if r1 > w2 + r2:
             return False
 
-        # they are on the same horizontal line
+        # they are on the same vertical line
         return True
 
     #
@@ -150,7 +158,7 @@ class GeometryOptimizer:
     #  |    ||    |
     #   ----  ----
     #
-    def __onSameHorizontalLine( geometry, otherGeometry ):
+    def __onSameHorizontalLine( self, geometry, otherGeometry ):
         h1 = geometry.getHeightInPixels()
         d1 = geometry.getDown()
 
@@ -165,16 +173,56 @@ class GeometryOptimizer:
         # they are on the same horizontal line
         return True
 
-    def __optimizeRow( geometries ):
-        #TODO
-
+    def __optimizeRow( self, geometries ):
         #NOTE: optimze the biggest geometry!
         #NOTE: direction of the increase, e.g width -> increase width rightwards, might want to change offset instead
-        pass
 
-    def __optimizeColumn( geometries ):
-        #TODO
+        totalColumnsUsed = 0
+        maxColumns = geometries[-1].getAvailableArea()[0]
+        if maxColumns < 0:
+            # TODO: handle this "error" in a more fluent way
+            return False
 
+        for g in geometries:
+            totalColumnsUsed += g.getWidth()
+
+        # TODO: handle more increasing/decreasing then +/- 1
+        for g in geometries:
+            newWidth = g.getHeight()
+            if totalColumnsUsed > maxColumns:
+                newWidth -= 1
+                totalColumnsUsed -= 1
+            if totalColumnsUsed < maxColumns:
+                newWidth += 1
+                totalColumnsUsed += 1
+            g.setHardCodedGeometry( newWidth, g.getHeight, g.getDown, g.getRight )
+
+        return True
+
+    def __optimizeColumn( self, geometries ):
         #NOTE: optimze the biggest geometry!
         #NOTE: direction of the increase, e.g height -> increase height downards, might want to change offset instead
-        pass
+
+        totalRowsUsed = 0
+        maxRows = geometries[-1].getAvailableArea()[0]
+        if maxRows < 0:
+            # TODO: handle this "error" in a more fluent way
+            return False
+
+        for g in geometries:
+            totalRowsUsed += g.getHeight()
+
+        # TODO: handle more increasing/decreasing then +/- 1
+        for g in geometries:
+            newHeight = g.getHeight()
+            if totalRowsUsed > maxRows:
+                newHeight -= 1
+                totalRowsUsed -= 1
+            if totalRowsUsed < maxRows:
+                newHeight += 1
+                totalRowsUsed += 1
+            g.setHardCodedGeometry( g.getWidth, newHeight, g.getDown, g.getRight )
+
+        return True
+
+
