@@ -66,6 +66,12 @@ class Geometry:
     def getRight( self ):
         return self.__right
 
+    def getWidthInPixels( self ):
+        return self.__width * Geometry.COLUMN_SIZE
+
+    def getHeightInPixels( self ):
+        return self.__height * Geometry.ROW_SIZE
+
     def __str__( self ):
         asStr = str(self.__width)
         asStr += 'x' + str(self.__height)
@@ -83,6 +89,7 @@ class GeometryOptimizer:
 
     #TODO: Optimization might not always be wanted, so the style should define if
     # it wants it or not!
+    # geometries is a list of Geometry objects
     def __init__( self, geometries):
         self.__geometries = geometries
 
@@ -107,33 +114,56 @@ class GeometryOptimizer:
                     toOptimize.append(otherGeometry)
             self.__optimizeColumn( toOptimize )
 
+    #
+    #              ----  
+    #  ---------->|    | 
+    #   r1        |    | 
+    #        ---- | w1 |
+    #  ---->| w2 ||    |
+    #   r2  |    ||    |
+    #        ----  ---- 
+    #
     def __onSameVerticalLine( geometry, otherGeometry ):
-        w1 = geometry.getWidth()
-        h1 = geometry.getHeight()
-        d1 = geometry.getDown()
+        w1 = geometry.getWidthInPixels()
         r1 = geometry.getRight()
 
-        w2 = otherGeometry.getWidth()
-        h2 = otherGeometry.getHeight()
-        d2 = otherGeometry.getDown()
+        w2 = otherGeometry.getWidthInPixels()
         r2 = otherGeometry.getRight()
 
-        #TODO
-        return False
+        if r1 + w1 < r2:
+            return False
+        if r1 > w2 + r2:
+            return False
 
+        # they are on the same horizontal line
+        return True
+
+    #
+    #  |      |
+    #  | d1   | d2
+    #  V      |
+    #   ----  |
+    #  |    | |
+    #  |    | V
+    #  | h1 | ----
+    #  |    || h2 |
+    #  |    ||    |
+    #   ----  ----
+    #
     def __onSameHorizontalLine( geometry, otherGeometry ):
-        w1 = geometry.getWidth()
-        h1 = geometry.getHeight()
+        h1 = geometry.getHeightInPixels()
         d1 = geometry.getDown()
-        r1 = geometry.getRight()
 
-        w2 = otherGeometry.getWidth()
-        h2 = otherGeometry.getHeight()
+        h2 = otherGeometry.getHeightInPixels()
         d2 = otherGeometry.getDown()
-        r2 = otherGeometry.getRight()
 
-        #TODO
-        return False
+        if d1 + h1 < d2:
+            return False
+        if d1 > d2 + h2:
+            return False
+
+        # they are on the same horizontal line
+        return True
 
     def __optimizeRow( geometries ):
         #TODO
