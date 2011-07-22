@@ -34,7 +34,8 @@ class TestAppSlap(unittest.TestCase):
         self.__dimGetter.getDimensions = mock.Mock(return_value=(1024, 728)) 
         pass
 
-    @unittest.expectedFailure
+    # NOTE: if needed to make a testcase fail expectedly, use this:
+    #@unittest.expectedFailure
     def testStyleThreeOn1024x768(self):
         self.__appslap.parseCmdLineOptions(['-p', 'xterm', '-s', 'three'])
         self.__appslap.getFromSystem.assert_called_with("xrandr -q | /bin/grep '*'")
@@ -47,7 +48,7 @@ class TestAppSlap(unittest.TestCase):
         #self.__appslap.issueSystemCall = mock.Mock(return_value=True)
 
         expectedCallsWithArguments = [
-                (('xterm -bg black -fg gray -cr cyan -geometry 84x27+0+0 +cm +dc +sb zsh',), {}), 
+                (('xterm -bg black -fg gray -cr cyan -geometry 84x26+0+0 +cm +dc +sb zsh',), {}), 
                 (('xterm -bg black -fg gray -cr cyan -geometry 84x27+0-0 +cm +dc +sb zsh',), {}),
                 (('xterm -bg black -fg gray -cr cyan -geometry 84x55-0+0 +cm +dc +sb zsh',), {})
                 ]

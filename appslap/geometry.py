@@ -3,7 +3,7 @@
 class Geometry:
 
     COLUMN_SIZE = 6
-    ROW_SIZE = 12
+    ROW_SIZE = 13
 
     def __init__( self ):
         self.__screenWidth = 800 # pixels
@@ -112,7 +112,11 @@ class GeometryOptimizer:
         for otherGeometry in self.__geometries:
             if self.__onSameHorizontalLine( geometry, otherGeometry ):
                 # NOTE: alse the geometry to compare with will be appended here
-                toOptimize.append(otherGeometry)
+                # FIXME: only compare two at a time, since the onSameXXXLine func does 
+                #       not actually check if they ALL are on the same line, this should work, right?
+                # THIS DOES NOT WORK
+                if len(toOptimize) < 2: 
+                    toOptimize.append(otherGeometry)
         self.__optimizeRow( toOptimize )
 
     def __adjustHeight( self, geometry ):
@@ -120,7 +124,11 @@ class GeometryOptimizer:
         for otherGeometry in self.__geometries:
             if self.__onSameVerticalLine( geometry, otherGeometry ):
                 # NOTE: alse the geometry to compare with will be appended here
-                toOptimize.append(otherGeometry)
+                # FIXME: only compare two at a time, since the onSameXXXLine func does 
+                #        not actually check if they ALL are on the same line, this should work, right?
+                # THIS DOES NOT WORK
+                if len(toOptimize) <= 2:
+                    toOptimize.append(otherGeometry)
         self.__optimizeColumn( toOptimize )
 
     #
@@ -184,8 +192,13 @@ class GeometryOptimizer:
             # TODO: handle this "error" in a more fluent way
             return False
 
+        print "__optimizeRow()"
         for g in geometries:
+            print g
             totalColumnsUsed += g.getWidth()
+            #FIXME: This is a very dirty hack to take into account the window borders!
+            #       Make the Tk dimensions getter also take care of reading window border widths!
+            totalColumnsUsed += 0.75
 
         # TODO: handle more increasing/decreasing then +/- 1
         for g in geometries:
@@ -212,9 +225,9 @@ class GeometryOptimizer:
 
         for g in geometries:
             totalRowsUsed += g.getHeight()
-
-        #FIXME: why is this totalRowsUsed == maxRows
-        #       it clearly is NOT when inspecting the actual window size
+            #FIXME: This is a very dirty hack to take into account the window borders!
+            #       Make the Tk dimensions getter also take care of reading window border widths!
+            totalRowsUsed += 1.5 
 
         # TODO: handle more increasing/decreasing then +/- 1
         for g in geometries:
