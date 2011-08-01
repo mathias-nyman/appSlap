@@ -192,9 +192,7 @@ class GeometryOptimizer:
             # TODO: handle this "error" in a more fluent way
             return False
 
-        print "__optimizeRow()"
         for g in geometries:
-            print g
             totalColumnsUsed += g.getWidth()
             #FIXME: This is a very dirty hack to take into account the window borders!
             #       Make the Tk dimensions getter also take care of reading window border widths!
