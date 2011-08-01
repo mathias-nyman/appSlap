@@ -37,7 +37,7 @@ class TestAppSlap(unittest.TestCase):
     # NOTE: if needed to make a testcase fail expectedly, use this:
     #@unittest.expectedFailure
     def testStyleThreeOn1024x768(self):
-        self.__appslap.parseCmdLineOptions(['-p', 'xterm', '-s', 'three'])
+        self.__appslap.parseCmdLineOptions(['-p', 'xterm', 'three'])
         self.__appslap.getFromSystem.assert_called_with("xrandr -q | /bin/grep '*'")
         self.__appslap.launchWindows()
 

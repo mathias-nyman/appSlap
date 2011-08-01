@@ -132,6 +132,7 @@ class AppSlap:
     def parseCmdLineOptions( self, argv ):
         try:
             import argparse
+
             # NOTE: we might want to give this to the constructor of ArgumentParser if we want to use
             # e.g newline characters in help text
             # formatter_class=RawTextHelpFormatter
@@ -143,7 +144,7 @@ class AppSlap:
             parser.add_argument('-p', '--program', dest='program', nargs=1, default=[self.Defaults.program.getName()],
                     choices=[p.getName() for p in self.Options.programs],
                     help='program to launch')
-            parser.add_argument('-s', '--style', dest='style', nargs=1, default=[self.Defaults.style.getName()],
+            parser.add_argument('style', nargs='?', default=[self.Defaults.style.getName()],
                     choices=[s.getName() for s in self.Options.styles],
                     help='style of window positioning')
             #FIXME: argparse works outside this try, but only with one complex type argument
@@ -160,7 +161,9 @@ class AppSlap:
         global VERBOSE
         DEBUG = args.debug
         VERBOSE = True if args.debug else args.verbose
-        self.setStyle(  args.style[0] )
+        # NOTE: we need to join() because argparse makes style a list if default, and a string if option given
+        debug(''.join(args.style))
+        self.setStyle( ''.join(args.style) )
         self.setProgram( args.program[0] )
 
 

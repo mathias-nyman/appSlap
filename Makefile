@@ -28,7 +28,7 @@ install:
 
 user-install:
 	@ # For people without enough system rights for install
-	@echo -e '\n$(BLUE) ------------- INSTALL -------------  $(NO_COLOR)\n'
+	@echo -e '\n$(BLUE) ----------- USER-INSTALL -----------  $(NO_COLOR)\n'
 	@python setup.py install --user
 
 
