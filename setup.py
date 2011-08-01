@@ -12,7 +12,7 @@ class CustomInstall(install):
             pass
              # TODO: install python 2.7.1
         if not checkDependencies():
-            print "ERROR: Missing some python modules!"
+            print "ERROR: Missing python module!"
             pass
              # TODO: install missing modules
         install.run(self) # proceed with the installation
@@ -22,15 +22,21 @@ def checkPythonVersion():
     return sys.version_info >= (2, 7, 1) #TODO: does e.g python 3 work?
 
 def checkDependencies():
-    try:
-        __import__('Tkinter')
-        __import__('argparse')
-        __import__('mock')
-        __import__('unittest')
-        return True
+    print "Checking python module dependencies..."
 
-    except ImportError:
-        return None
+    modules = ['Tkinter', 
+               'argparse', 
+               'unittest', 
+               'mock']
+
+    someMissing = False
+    for module in modules:
+        try:
+            __import__(module)
+            print module, '- OK'
+        except ImportError:
+            someMissing = True
+            print module, '- MISSING'
 
 
 long_description = 'Slaps your desired apps on your screen in your desired style'
@@ -43,7 +49,7 @@ setup(name = 'appslap',
         url = 'http://www.github.com/appSlap', #TODO: define url
         long_description = long_description,
         packages = ['appslap'],
-        scripts=['bin/appslap'],
+        scripts=['bin/slap'],
         cmdclass=dict(install=CustomInstall)
         )
 
