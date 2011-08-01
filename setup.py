@@ -29,14 +29,15 @@ def checkDependencies():
                'unittest', 
                'mock']
 
-    someMissing = False
+    missingModule = False
     for module in modules:
         try:
             __import__(module)
             print module, '- OK'
         except ImportError:
-            someMissing = True
+            missingModule = True
             print module, '- MISSING'
+    return not missingModule 
 
 
 long_description = 'Slaps your desired apps on your screen in your desired style'
