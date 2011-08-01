@@ -19,6 +19,7 @@ default: build
 clean:
 	@# TODO: how to clean? This does not work
 	@#python setup.py uninstall
+	@$(RM) -r ./build
 
 install:
 	@echo -e '\n$(BLUE) ------------- INSTALL -------------  $(NO_COLOR)\n'
